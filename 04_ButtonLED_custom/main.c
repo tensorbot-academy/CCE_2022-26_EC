@@ -55,7 +55,7 @@ int main(void)
   /* Infinite loop */
   while (1)
   {
-    /* Check if button is pressed (logic high) */
+    /* Check if button is pressed (logic LOW ) */
     if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_1) == GPIO_PIN_RESET)
     {
       if (!buttonHeld)
@@ -75,7 +75,7 @@ int main(void)
           // Reset state
           buttonHeld = false;
           // Wait until button is released before next detection
-          while (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_1) == GPIO_PIN_SET);
+          while (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_1) == GPIO_PIN_RESET);
         }
       }
     }
