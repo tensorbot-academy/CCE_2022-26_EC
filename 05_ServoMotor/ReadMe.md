@@ -25,18 +25,18 @@ This project demonstrates how to control a servo motor using PWM on STM32 (Bluep
 
 ### Main Code Addition
 
-- At the top of `main.c`, add below the user PV comment section:
+- At the `main.c`, add below the user codes:
 
 ```c
 /* USER CODE BEGIN PV */
 uint16_t pulse = 250;
 /* USER CODE END PV */
 ```
-
- /* USER CODE BEGIN 2 */
-  HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_2);
-  /* USER CODE END 2 */
-
+```c
+/* USER CODE BEGIN 2 */
+HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_2);
+/* USER CODE END 2 */
+```
 - In the `while` loop under **User Code Begin 3**, insert the code below:
 
 ```c
