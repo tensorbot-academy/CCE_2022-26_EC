@@ -198,3 +198,4 @@ void assert_failed(uint8_t *file, uint32_t line)
   /* User can add implementation to report error */
 }
 #endif /* USE_FULL_ASSERT */
+
