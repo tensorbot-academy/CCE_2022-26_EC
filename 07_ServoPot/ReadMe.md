@@ -27,7 +27,7 @@ This project demonstrates how to control a servo motor’s position with a poten
 
 ### Main Code Addition
 
-- At the top of `main.c`, add below the user PV section:
+- At the `main.c` file, add user codes mentioned below:
 
 ```c
 /* USER CODE BEGIN PV */
