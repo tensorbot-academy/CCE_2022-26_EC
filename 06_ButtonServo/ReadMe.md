@@ -26,28 +26,47 @@ This project demonstrates how to rotate a servo motor to a particular position w
 
 ### Main Code Addition
 
-- At the top of `main.c`, add below the user PV comment section:
+- At the `main.c` file, add user codes mentioned below:
 
 ```c
 /* USER CODE BEGIN PV */
 uint16_t pulse = 250;
 /* USER CODE END PV */
 ```
-
+```c
+/* USER CODE BEGIN 2 */
+  HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_2);
+  __HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_2, pulse); // set initial 0 deg position
+/* USER CODE END 2 */
+```
 - In the `while` loop under **User Code Begin 3**, insert the code below:
 
 ```c
-if(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_3) == GPIO_PIN_RESET) // Button pressed
-{
-    pulse = 625; // 90 degree position ~1.25 ms pulse
-    __HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_2, pulse);
-    HAL_Delay(2000);
+/* USER CODE BEGIN WHILE */
+    /* USER CODE END WHILE */
+  while (1)
+	  {
+  if(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_3) == GPIO_PIN_RESET) // Active-low: pressed
+  {
+      // Move servo to 90 deg (1.25 ms pulse = 625 @ 2us ticks)
+      pulse = 625;
+      __HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_2, pulse);
 
-    pulse = 250; // 0 degree position ~0.5 ms pulse
-    __HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_2, pulse);
+      HAL_Delay(5000); // Hold for 5 seconds
 
-    // Wait for button release before continuing
-    while(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_3) == GPIO_PIN_RESET) {}
+      // Move back to 0 deg (0.5 ms = 250)
+      pulse = 250;
+      __HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_2, pulse);
+
+      // Wait for button release (debounce)
+      while (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_3) == GPIO_PIN_RESET)
+      {
+          HAL_Delay(10);
+      }
+  }
+
+    /* USER CODE BEGIN 3 */
+  /* USER CODE END 3 */
 }
 ```
 
