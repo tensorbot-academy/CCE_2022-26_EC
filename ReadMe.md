@@ -10,6 +10,7 @@ Welcome to the Embedded Workshop by Tensorbot Innovations! This repository serve
 - The `main` branch contains general guidelines and README files.
 - Branch names typically reflect the group or project name for easy identification.
 
+
 ## Branch Structure
 
 - **main**: This branch provides an overview, contribution guidelines, and repository-wide information.

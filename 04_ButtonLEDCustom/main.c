@@ -70,39 +70,54 @@ int main(void)
 
   /* MCU Configuration--------------------------------------------------------*/
 
-  /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
-  HAL_Init();
+  HAL_Init();                             // Reset peripherals, init HAL library
+  SystemClock_Config();                   // Configure system clock
+  MX_GPIO_Init();                          // Initialize GPIO
 
-  /* USER CODE BEGIN Init */
-
-  /* USER CODE END Init */
-
-  /* Configure the system clock */
-  SystemClock_Config();
-
-  /* USER CODE BEGIN SysInit */
-
-  /* USER CODE END SysInit */
-
-  /* Initialize all configured peripherals */
-  MX_GPIO_Init();
   /* USER CODE BEGIN 2 */
-
+  static uint32_t buttonPressStart = 0;    // stores press start time
+  static uint8_t  buttonHeld = 0;          // indicates LED ON phase
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-    /* USER CODE END WHILE */
-HAL_GPIO_WritePin(GPIOC, GPIO_PIN_13, 1);
-HAL_Delay(5000);
-HAL_GPIO_WritePin(GPIOC, GPIO_PIN_13, 0);
-HAL_Delay(2000);
+      // Check if button is pressed
+      if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_1) == GPIO_PIN_RESET)   // Active-High Button
+      {
+          // Start timing when first detected
+          if (buttonPressStart == 0)
+          {
+              buttonPressStart = HAL_GetTick();
+          }
 
-    /* USER CODE BEGIN 3 */
+          // If held for 5 seconds, turn LED ON
+          if (!buttonHeld && (HAL_GetTick() - buttonPressStart >= 5000))
+          {
+              HAL_GPIO_WritePin(GPIOA, GPIO_PIN_1, GPIO_PIN_SET);  // LED ON
+              buttonHeld = 1;                                      // enter LED ON phase
+              buttonPressStart = HAL_GetTick();                    // reuse for 3s LED timer
+          }
+      }
+      else
+      {
+          // Reset timer if released before 5 seconds
+          if (!buttonHeld)
+          {
+              buttonPressStart = 0;
+          }
+      }
+
+      // If LED is ON, keep it ON for 3 seconds
+      if (buttonHeld && (HAL_GetTick() - buttonPressStart >= 3000))
+      {
+          HAL_GPIO_WritePin(GPIOA, GPIO_PIN_1, GPIO_PIN_RESET);     // LED OFF
+          buttonHeld = 0;                                           // ready for next cycle
+          buttonPressStart = 0;
+      }
   }
-  /* USER CODE END 3 */
+  /* USER CODE END WHILE */
 }
 
 /**
@@ -149,32 +164,27 @@ void SystemClock_Config(void)
 static void MX_GPIO_Init(void)
 {
   GPIO_InitTypeDef GPIO_InitStruct = {0};
-  /* USER CODE BEGIN MX_GPIO_Init_1 */
-
-  /* USER CODE END MX_GPIO_Init_1 */
 
   /* GPIO Ports Clock Enable */
-  __HAL_RCC_GPIOC_CLK_ENABLE();
   __HAL_RCC_GPIOA_CLK_ENABLE();
+  __HAL_RCC_GPIOB_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOC, GPIO_PIN_13, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_1, GPIO_PIN_RESET);
 
-  /*Configure GPIO pin : PC13 */
-  GPIO_InitStruct.Pin = GPIO_PIN_13;
+  /*Configure GPIO pin : PA1 (LED) */
+  GPIO_InitStruct.Pin = GPIO_PIN_1;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-  HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
+  HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
-  /* USER CODE BEGIN MX_GPIO_Init_2 */
-
-  /* USER CODE END MX_GPIO_Init_2 */
+  /*Configure GPIO pin : PB1 (Button) */
+  GPIO_InitStruct.Pin = GPIO_PIN_1;
+  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;         // Change to PULLUP if needed
+  HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 }
-
-/* USER CODE BEGIN 4 */
-
-/* USER CODE END 4 */
 
 /**
   * @brief  This function is executed in case of error occurrence.
@@ -182,14 +192,12 @@ static void MX_GPIO_Init(void)
   */
 void Error_Handler(void)
 {
-  /* USER CODE BEGIN Error_Handler_Debug */
-  /* User can add his own implementation to report the HAL error return state */
   __disable_irq();
   while (1)
   {
   }
-  /* USER CODE END Error_Handler_Debug */
 }
+
 #ifdef USE_FULL_ASSERT
 /**
   * @brief  Reports the name of the source file and the source line number
@@ -200,9 +208,6 @@ void Error_Handler(void)
   */
 void assert_failed(uint8_t *file, uint32_t line)
 {
-  /* USER CODE BEGIN 6 */
-  /* User can add his own implementation to report the file name and line number,
-     ex: printf("Wrong parameters value: file %s on line %d\r\n", file, line) */
-  /* USER CODE END 6 */
+  /* User can add own implementation to report file name and line number */
 }
 #endif /* USE_FULL_ASSERT */
