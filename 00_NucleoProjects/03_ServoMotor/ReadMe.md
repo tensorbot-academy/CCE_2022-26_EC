@@ -1,6 +1,6 @@
 # 03_ServoMotor STM32 Project (Nucleo-F303RE)
 
-This project demonstrates how to control a servo motor using PWM on STM32 (Bluepill F103C8T6) with STM32CubeIDE and STM32CubeProgrammer.
+This project demonstrates how to control a servo motor using PWM on STM32 NucleoBoard with STM32CubeIDE.
 
 ## Setup Instructions
 
@@ -74,7 +74,7 @@ HAL_Delay(5000);
   - **Typical Servo Motor Connections:**
     - Signal (PWM): Connect to TIM2_CH2 output pin PA1 (A1)
     - Power: 5V (check servo specs and Bluepill board limits)
-    - Ground: GND (shared with Bluepill board)
+    - Ground: GND (shareD)
 
 ## Notes
 
