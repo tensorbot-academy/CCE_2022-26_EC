@@ -72,7 +72,7 @@ HAL_Delay(5000);
 - Refer to the servo motor wiring diagram provided in the project folder for all hardware connections.
 
   - **Typical Servo Motor Connections:**
-    - Signal (PWM): Connect to TIM2_CH2 output pin PA0 (A0)
+    - Signal (PWM): Connect to TIM2_CH2 output pin PA1 (A1)
     - Power: 5V (check servo specs and Bluepill board limits)
     - Ground: GND (shared with Bluepill board)
 
